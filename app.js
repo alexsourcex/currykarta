@@ -21,16 +21,27 @@
   const wgs84ToSweref = (lat, lon) => proj4('EPSG:4326', 'EPSG:3006', [lon, lat]); // -> [easting, northing]
   const swerefToWgs84 = (e, n) => { const p = proj4('EPSG:3006', 'EPSG:4326', [e, n]); return [p[1], p[0]]; }; // -> [lat, lon]
 
-  /** Self-check (console warning only). Zone 33 has central meridian 15°E, false easting 500000 m,
-   *  so lon=15° must give E=500000 exactly and lat=0 gives N=0. Also checks a round trip. */
+  /** Reference values for SWEREF 99 TM, computed with an INDEPENDENT implementation of the
+   *  Lantmäteriet/Krüger transverse-Mercator series (GRS80, k0=0.9996, lon0=15°E, FE=500000), not with proj4.
+   *  Anchor: lat 60°, lon 15° -> N = 0.9996 × meridian arc(60°) = 6651411.190 m. */
+  const REFERENCE_POINTS = [ // [lat, lon, easting, northing]
+    [60, 15, 500000.0, 6651411.19],
+    [59.3293, 18.0686, 674571.866, 6580743.008],
+    [63.8254, 20.263, 758807.111, 7088236.341],
+    [68.35, 18.8, 656372.173, 7586708.951]];
+
+  /** Dev self-check (console warning only): forward AND inverse against the reference values above (tolerance 1 cm),
+   *  plus the exact central-meridian identities (lon 15° -> E = 500000, lat 0 -> N = 0). */
   function verifyTransforms() {
+    const TOL = 0.01; // metres
+    let ok = true;
     const [e0, n0] = wgs84ToSweref(0, 15);
-    const [e1] = wgs84ToSweref(63.8254, 15);
-    const [e2, n2] = wgs84ToSweref(63.8254, 20.263);
-    const [lat, lon] = swerefToWgs84(e2, n2);
-    const ok = Math.abs(e0 - 500000) < 1e-3 && Math.abs(n0) < 1e-3 && Math.abs(e1 - 500000) < 1e-3 &&
-      Math.abs(lat - 63.8254) < 1e-8 && Math.abs(lon - 20.263) < 1e-8;
-    if (!ok) console.warn('EPSG:3006 self-check FAILED');
+    if (Math.abs(e0 - 500000) > 1e-3 || Math.abs(n0) > 1e-3) ok = false;
+    for (const [lat, lon, eRef, nRef] of REFERENCE_POINTS) {
+      const [e, n] = wgs84ToSweref(lat, lon), [la, lo] = swerefToWgs84(eRef, nRef);
+      if (Math.abs(e - eRef) > TOL || Math.abs(n - nRef) > TOL || Math.abs(la - lat) > 1e-7 || Math.abs(lo - lon) > 1e-7) ok = false;
+    }
+    if (!ok) console.warn('EPSG:3006 reference check FAILED: projection output deviates from reference values');
     return ok;
   }
 
@@ -122,7 +133,9 @@
     const lat = map.getCenter().lat, mpp = (40075016.686 * Math.cos((lat * Math.PI) / 180)) / (256 * Math.pow(2, map.getZoom()));
     const pxSpacing = params.spacing / mpp;
     if (pxSpacing < MIN_PX_SPACING) {
-      showNotice(`Grid hidden: ${params.spacing.toFixed(2)} m spacing is ${pxSpacing.toFixed(1)} px at this zoom. Zoom in to see it.`);
+      // zoom at which the real spacing reaches MIN_PX_SPACING (spacing itself is never altered)
+      const needZoom = Math.ceil(Math.log2((40075016.686 * Math.cos((lat * Math.PI) / 180) * MIN_PX_SPACING) / (256 * params.spacing)));
+      showNotice(`GRID RESOLUTION ${params.spacing.toFixed(2)} m · Zoom in to visualize (zoom ${needZoom}+)`);
       return;
     }
     showNotice('');
