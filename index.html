@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Currykartan — Visualizing a theoretical earth grid</title>
+  <meta name="description" content="Interactive visualization of the theoretical Curry grid on SWEREF 99 TM. Not a scientifically validated phenomenon.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero" id="top">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <h1>CURRY GRID</h1>
+      <p class="tagline">Visualizing a theoretical earth grid</p>
+      <p class="status mono">3.50 m · NORTHERN SWEDEN · THEORETICAL MODEL</p>
+      <button class="btn" id="explore-btn" type="button">EXPLORE THE GRID</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="map-section" id="map-section" aria-label="Interactive map">
+      <div id="map" role="application" aria-label="Map of Sweden with theoretical curry grid overlay"></div>
+      <canvas id="grid-canvas" aria-hidden="true"></canvas>
+      <div id="map-notice" class="notice mono" role="status" hidden></div>
+
+      <details class="panel controls" id="controls" open>
+        <summary>GRID PARAMETERS</summary>
+        <div class="fields">
+          <label for="spacing">Spacing <span class="mono unit">m</span></label>
+          <input id="spacing" class="mono" type="number" step="0.5" min="0.1" max="10000" value="3.50" inputmode="decimal">
+          <label for="angle">Angle <span class="mono unit">°</span></label>
+          <input id="angle" class="mono" type="number" step="1" min="-360" max="360" value="45.00" inputmode="decimal">
+          <label for="offsetX">Offset X <span class="mono unit">m</span></label>
+          <input id="offsetX" class="mono" type="number" step="0.5" min="-100000" max="100000" value="0.00" inputmode="decimal">
+          <label for="offsetY">Offset Y <span class="mono unit">m</span></label>
+          <input id="offsetY" class="mono" type="number" step="0.5" min="-100000" max="100000" value="0.00" inputmode="decimal">
+        </div>
+        <div class="checks">
+          <label><input type="checkbox" id="gridA" checked> Grid A <span class="swatch a" aria-hidden="true"></span><span class="sr-only">(solid line)</span></label>
+          <label><input type="checkbox" id="gridB" checked> Grid B <span class="swatch b" aria-hidden="true"></span><span class="sr-only">(dashed line)</span></label>
+        </div>
+        <div class="sliders">
+          <label for="opacity">Opacity</label>
+          <input id="opacity" type="range" min="0.1" max="1" step="0.05" value="0.85">
+          <label for="lineWidth">Line width</label>
+          <input id="lineWidth" type="range" min="0.5" max="4" step="0.25" value="1">
+        </div>
+      </details>
+
+      <aside class="panel info" aria-label="Model information">
+        <button class="icon-btn" id="info-btn" type="button" aria-label="About this model" aria-haspopup="dialog">i</button>
+        <dl class="mono">
+          <dt>MODEL</dt><dd>Theoretical Curry Grid</dd>
+          <dt>SPACING</dt><dd id="info-spacing">3.50 m</dd>
+          <dt>PROJECTION</dt><dd>SWEREF 99 TM</dd>
+          <dt>STATUS</dt><dd>Visualization only</dd>
+        </dl>
+      </aside>
+
+      <div class="panel readout mono" aria-live="off">
+        <div>LAT <span id="r-lat">–</span></div>
+        <div>LON <span id="r-lon">–</span></div>
+        <div>EASTING <span id="r-e">–</span></div>
+        <div>NORTHING <span id="r-n">–</span></div>
+        <div class="zoom">ZOOM <span id="r-zoom">–</span></div>
+      </div>
+    </section>
+
+    <section class="cards" aria-label="About the visualization">
+      <article class="card"><h2>THE GRID</h2><p>3.5 metre theoretical spacing</p></article>
+      <article class="card"><h2>PROJECTION</h2><p>Calculated using SWEREF 99 TM</p></article>
+      <article class="card"><h2>VISUALIZATION</h2><p>An interactive mathematical representation</p></article>
+    </section>
+  </main>
+
+  <footer>
+    <strong>CURRY GRID</strong>
+    <p>Theoretical geospatial visualization</p>
+    <p>Not a scientifically validated phenomenon.</p>
+  </footer>
+
+  <dialog id="about-modal" aria-labelledby="about-title">
+    <h2 id="about-title">About this model</h2>
+    <p>Curry lines are <strong>not scientifically established</strong>. There is no scientifically verified evidence that they represent real energy lines on Earth.</p>
+    <p>Currykartan visualizes a theoretical, esoteric model. Mathematics, coordinates and map projection are used to <em>draw</em> the model, not to prove it.</p>
+    <p>The map geometry itself is computed in SWEREF 99 TM (EPSG:3006) and is technically accurate; the existence of the lines is not claimed.</p>
+    <button class="btn" id="modal-close" type="button">CLOSE</button>
+  </dialog>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.2/proj4.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
