@@ -6,7 +6,7 @@
   const $ = (id) => document.getElementById(id);
 
   /* ===== Constants ===== */
-  const DEFAULTS = { spacing: 3.5, angle: 45, offsetX: 0, offsetY: 0, gridA: true, gridB: true, opacity: 0.85, lineWidth: 1 };
+  const DEFAULTS = { spacing: 3.5, angle: 45, offsetX: 0, offsetY: 0, gridA: true, gridB: true, opacity: 0.55, lineWidth: 0.75 };
   const LIMITS = { spacing: [0.1, 10000], angle: [-360, 360], offsetX: [-1e5, 1e5], offsetY: [-1e5, 1e5] };
   const MIN_PX_SPACING = 6;   // below this the grid is a solid wash; don't draw
   const MAX_LINES = 1500;     // hard safety cap per line family
