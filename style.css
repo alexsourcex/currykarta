@@ -72,6 +72,80 @@ dialog { max-width: 520px; width: calc(100% - 2rem); background: var(--bg2); col
 dialog::backdrop { background: rgba(2, 6, 14, 0.75); backdrop-filter: blur(4px); }
 dialog h2 { margin-top: 0; font-weight: 300; letter-spacing: 0.1em; }
 
+/* ===== Phase 2: instrument-style UI panels (controls + model card). Shared tokens keep both panels one design system. ===== */
+:root { --hairline: rgba(34, 211, 238, 0.16); --label: #7f98b8; --panel-radius: 10px;
+  --panel-bg: linear-gradient(180deg, rgba(14, 26, 46, 0.8), rgba(8, 16, 30, 0.8)); }
+.controls, .info { border: 1px solid var(--hairline); border-radius: var(--panel-radius); background: var(--panel-bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04); }
+
+/* Panel headings: small accent bar + uppercase tracking (shared by both panels) */
+.controls summary, .info dt:first-of-type { display: flex; align-items: center; gap: 0.6rem; font: 600 0.68rem var(--mono);
+  letter-spacing: 0.2em; color: var(--cyan); }
+.controls summary::before, .info dt:first-of-type::before { content: ""; width: 3px; height: 10px; border-radius: 2px;
+  background: var(--cyan); box-shadow: 0 0 8px rgba(34, 211, 238, 0.55); }
+.controls summary { list-style: none; }
+.controls summary::-webkit-details-marker { display: none; }
+.controls summary::after { content: ""; margin-left: auto; width: 6px; height: 6px; border-right: 1.5px solid var(--label);
+  border-bottom: 1.5px solid var(--label); transform: rotate(45deg); transition: transform 0.2s; }
+.controls[open] summary::after { transform: rotate(-135deg); }
+.controls { padding: 0.8rem 1rem 1rem; }
+
+/* Controls: three clearly separated groups (numeric parameters / grid toggles / display sliders) */
+.fields, .checks, .sliders { margin: 0.85rem 0 0; padding-top: 0.85rem; border-top: 1px solid var(--hairline); }
+.fields { grid-template-columns: 1fr 96px; gap: 0.55rem 0.75rem; font-size: 0.7rem; }
+.fields label, .sliders label { font: 500 0.66rem var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--label); }
+.unit { text-transform: none; letter-spacing: 0; margin-left: 0.2em; opacity: 0.8; }
+
+/* Numeric inputs read as instrument values: dark, right-aligned, tabular monospace */
+input[type="number"] { color-scheme: dark; background: rgba(3, 8, 18, 0.65); color: #d8f3fb; border: 1px solid var(--hairline);
+  border-radius: 6px; padding: 0.35rem 0.55rem; font: 500 0.82rem var(--mono); font-variant-numeric: tabular-nums;
+  text-align: right; transition: border-color 0.15s, box-shadow 0.15s; }
+input[type="number"]:hover { border-color: rgba(34, 211, 238, 0.4); }
+input[type="number"]:focus-visible { outline: 1px solid var(--cyan); outline-offset: 0; border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15); }
+
+/* Grid A / B toggles: legend swatches mirror the canvas styling (A solid, B dashed 6:4) */
+.checks { display: flex; gap: 0.5rem; }
+.checks label { flex: 1; display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.55rem; border: 1px solid var(--hairline);
+  border-radius: 6px; font: 500 0.68rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s; }
+.checks label:hover { border-color: rgba(34, 211, 238, 0.4); }
+.checks label:has(input:checked) { background: rgba(34, 211, 238, 0.06); border-color: rgba(34, 211, 238, 0.32); }
+.checks input { accent-color: var(--cyan); margin: 0; }
+#gridB { accent-color: var(--violet); }
+.swatch { width: 28px; height: 2px; margin-left: auto; border: 0; background: var(--cyan); box-shadow: 0 0 6px rgba(34, 211, 238, 0.6); }
+.swatch.b { background: repeating-linear-gradient(90deg, var(--violet) 0 6px, transparent 6px 10px); box-shadow: none; }
+
+/* Sliders: thin track, ring thumb, ring grows on hover/focus */
+.sliders { grid-template-columns: 76px 1fr; gap: 0.55rem 0.6rem; }
+input[type="range"] { -webkit-appearance: none; appearance: none; height: 18px; background: transparent; margin: 0; }
+input[type="range"]:focus-visible { outline: none; }
+input[type="range"]::-webkit-slider-runnable-track { height: 2px; border-radius: 2px; background: rgba(143, 166, 196, 0.35); }
+input[type="range"]::-moz-range-track { height: 2px; border-radius: 2px; background: rgba(143, 166, 196, 0.35); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; box-sizing: border-box; width: 14px; height: 14px; margin-top: -6px;
+  border-radius: 50%; background: var(--bg2); border: 2px solid var(--cyan); transition: box-shadow 0.15s; }
+input[type="range"]::-moz-range-thumb { box-sizing: border-box; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--bg2); border: 2px solid var(--cyan); transition: box-shadow 0.15s; }
+input[type="range"]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15); }
+input[type="range"]:hover::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15); }
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.4); }
+input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.4); }
+
+/* Model card: heading row (MODEL + name), then label/value rows; status as a compact tag */
+.info { padding: 0.8rem 1rem 0.9rem 3rem; min-width: 200px; }
+.info dl { display: grid; grid-template-columns: auto 1fr; gap: 0.45rem 1.1rem; align-items: baseline; }
+.info dt, .info dd { margin: 0; }
+.info dt { font-size: 0.62rem; letter-spacing: 0.14em; color: var(--label); }
+.info dd { font-size: 0.8rem; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.info dt:first-of-type, .info dd:first-of-type { grid-column: 1 / -1; }
+.info dd:first-of-type { text-align: left; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.02em;
+  padding-bottom: 0.6rem; margin-bottom: 0.15rem; border-bottom: 1px solid var(--hairline); }
+.info dd:last-of-type { justify-self: end; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.15rem 0.5rem; border: 1px solid rgba(167, 139, 250, 0.45); border-radius: 99px; }
+.icon-btn { left: 0.75rem; top: 0.7rem; width: 26px; height: 26px; border-color: rgba(34, 211, 238, 0.5);
+  transition: background 0.15s, box-shadow 0.15s; }
+.icon-btn:hover { background: rgba(34, 211, 238, 0.12); box-shadow: 0 0 10px rgba(34, 211, 238, 0.3); }
+
 /* Responsive: compact controls, stacked panels on small screens */
 @media (max-width: 700px) {
   .map-section { height: 80vh; }
