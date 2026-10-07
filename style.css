@@ -147,7 +147,7 @@ input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba
 .icon-btn:hover { background: rgba(34, 211, 238, 0.12); box-shadow: 0 0 10px rgba(34, 211, 238, 0.3); }
 
 /* ===== Phase 3: Hero (typography, CTA, transition to map) ===== */
-.hero { min-height: min(88vh, 780px); min-height: min(88svh, 780px); }
+.hero { min-height: 100vh; min-height: 100svh; } /* full-screen landing; svh = stable height with mobile address bar shown (page load state) */
 .hero-inner { isolation: isolate; max-width: 46rem; }
 .hero-inner::before { /* soft dark halo so the animated grid never competes with the title */
   content: ""; position: absolute; inset: -3rem -5rem; z-index: -1;
