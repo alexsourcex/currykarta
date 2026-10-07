@@ -200,9 +200,9 @@
     function resize() { const dpr = window.devicePixelRatio || 1, r = cv.getBoundingClientRect();
       cv.width = r.width * dpr; cv.height = r.height * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
     function frame(t) {
-      const w = cv.clientWidth, h = cv.clientHeight, d = Math.hypot(w, h), off = ((t || 0) * 0.006) % GAP;
+      const w = cv.clientWidth, h = cv.clientHeight, d = Math.hypot(w, h), off = ((t || 0) * 0.004) % GAP;
       ctx.clearRect(0, 0, w, h); ctx.save(); ctx.translate(w / 2, h / 2); ctx.rotate(Math.PI / 4);
-      ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(34,211,238,0.35)'; ctx.shadowColor = 'rgba(34,211,238,0.6)'; ctx.shadowBlur = 6;
+      ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(34,211,238,0.24)'; ctx.shadowColor = 'rgba(34,211,238,0.45)'; ctx.shadowBlur = 4;
       ctx.beginPath();
       for (let x = -d + off; x < d; x += GAP) { ctx.moveTo(x, -d); ctx.lineTo(x, d); }  // family 1
       for (let y = -d + off; y < d; y += GAP) { ctx.moveTo(-d, y); ctx.lineTo(d, y); }  // family 2
