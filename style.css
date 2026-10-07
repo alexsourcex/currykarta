@@ -175,6 +175,12 @@ input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba
   .hero h1 { white-space: nowrap; }
 }
 
+/* Desktop: Leaflet zoom control moved from top-left (covered by GRID PARAMETERS) to bottom-left, just above the readout panel.
+   Anchoring to the bottom avoids guessing the height of the collapsible parameters panel. Mobile has its own rule below. */
+@media (min-width: 701px) {
+  .leaflet-top.leaflet-left { top: auto; bottom: 164px; }
+}
+
 /* Responsive: compact controls, stacked panels on small screens */
 @media (max-width: 700px) {
   /* Map: taller usable area (svh = stable with the mobile address bar shown) */
