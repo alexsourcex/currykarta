@@ -88,7 +88,11 @@
 
   /* ===== 4. Canvas rendering ===== */
   let notice = null, rafId = 0;
-  function showNotice(msg) { if (!notice) return; notice.textContent = msg || ''; notice.hidden = !msg; }
+  function showNotice(msg) { // only touch the DOM on change: render() calls this every frame, and the element is a live region
+    if (!notice) return; msg = msg || '';
+    if (notice.textContent !== msg) notice.textContent = msg;
+    if (notice.hidden !== !msg) notice.hidden = !msg;
+  }
 
   function sizeCanvas() {
     const r = gridCanvas.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
@@ -181,7 +185,7 @@
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       $('map-section')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
     });
-    if (window.matchMedia('(max-width: 700px)').matches) $('controls')?.removeAttribute('open'); // keep map visible on phones
+    if (window.matchMedia('(max-width: 700px), (max-height: 640px)').matches) $('controls')?.removeAttribute('open'); // keep map visible on phones / landscape
   }
 
   /* ===== 7. Mouse coordinate display ===== */
@@ -207,10 +211,14 @@
       for (let x = -d + off; x < d; x += GAP) { ctx.moveTo(x, -d); ctx.lineTo(x, d); }  // family 1
       for (let y = -d + off; y < d; y += GAP) { ctx.moveTo(-d, y); ctx.lineTo(d, y); }  // family 2
       ctx.stroke(); ctx.restore();
-      if (!reduce) requestAnimationFrame(frame); // rAF pauses automatically in background tabs
     }
+    let visible = true, running = false;          // pause the loop while the hero is scrolled out of view
+    function tick(t) { frame(t); if (visible) requestAnimationFrame(tick); else running = false; }
+    function start() { if (!running) { running = true; requestAnimationFrame(tick); } }
     resize(); window.addEventListener('resize', () => { resize(); if (reduce) frame(0); });
-    reduce ? frame(0) : requestAnimationFrame(frame);
+    if (reduce) { frame(0); return; }
+    if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) start(); }).observe(cv);
+    start();
   }
 
   /* ===== Boot ===== */
