@@ -177,11 +177,33 @@ input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba
 
 /* Responsive: compact controls, stacked panels on small screens */
 @media (max-width: 700px) {
-  .map-section { height: 80vh; }
-  .controls { width: calc(100% - 24px); }
-  .info { top: auto; right: 12px; bottom: 28px; padding-left: 2.8rem; }
-  .info dt:nth-of-type(n+3), .info dd:nth-of-type(n+3) { display: none; }
-  .readout { bottom: 28px; font-size: 0.65rem; }
-  .notice { bottom: 120px; }
+  /* Map: taller usable area (svh = stable with the mobile address bar shown) */
+  .map-section { height: 90vh; height: 90svh; min-height: 560px; }
+
+  /* Grid parameters: compact (2x2 numeric grid, tighter sections) while keeping ~40px touch targets */
+  .controls { width: calc(100% - 24px); padding: 0.65rem 0.85rem 0.75rem; }
+  .fields, .checks, .sliders { margin-top: 0.6rem; padding-top: 0.6rem; }
+  .fields { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, auto); grid-auto-flow: column; gap: 0.25rem 0.8rem; }
+  input[type="number"] { min-height: 40px; font-size: 16px; } /* >=16px stops iOS Safari zooming the page on focus */
+  .checks label { min-height: 40px; }
+  .checks input { width: 18px; height: 18px; }
+  .sliders { gap: 0.2rem 0.6rem; }
+  input[type="range"] { height: 28px; }
+  input[type="range"]::-webkit-slider-thumb { width: 20px; height: 20px; margin-top: -9px; }
+  input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; }
+
+  /* Bottom row: readout (fixed width, left) and model card (remaining width, right) cannot overlap by construction */
+  .readout { left: 12px; bottom: 28px; width: 8.5rem; padding: 0.5rem 0.7rem; font-size: 0.65rem; line-height: 1.45; }
+  .info { top: auto; right: 12px; bottom: 28px; width: calc(100% - 8.5rem - 36px); max-width: 16rem; min-width: 0; padding: 0.6rem 0.7rem 0.65rem; }
+  .info dl { gap: 0.3rem 0.6rem; }
+  .info dt { font-size: 0.56rem; letter-spacing: 0.1em; }
+  .info dd { font-size: 0.66rem; }
+  .info dt:first-of-type { min-height: 30px; }           /* room for the info button at top right */
+  .info dd:first-of-type { font-size: 0.72rem; padding-bottom: 0.4rem; }
+  .info dd:last-of-type { font-size: 0.6rem; letter-spacing: 0.02em; text-transform: none; padding: 0.1rem 0.4rem; }
+  .icon-btn { left: auto; right: 0.5rem; top: 0.55rem; width: 30px; height: 30px; }
+
+  /* Resolution notice sits above both bottom panels, full width, clear of the attribution */
+  .notice { bottom: 192px; width: calc(100% - 24px); max-width: none; padding: 0.4rem 0.7rem; font-size: 0.68rem; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
