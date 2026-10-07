@@ -178,7 +178,7 @@ input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba
 /* Responsive: compact controls, stacked panels on small screens */
 @media (max-width: 700px) {
   /* Map: taller usable area (svh = stable with the mobile address bar shown) */
-  .map-section { height: 90vh; height: 90svh; min-height: 560px; }
+  .map-section { height: 100vh; height: 100svh; height: 100dvh; min-height: 560px; } /* full-screen map; dvh follows the collapsing address bar so no sliver of the next section shows */
 
   /* Grid parameters: compact (2x2 numeric grid, tighter sections) while keeping ~40px touch targets */
   .controls { width: calc(100% - 24px); padding: 0.65rem 0.85rem 0.75rem; }
@@ -202,6 +202,10 @@ input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba
   .info dd:first-of-type { font-size: 0.72rem; padding-bottom: 0.4rem; }
   .info dd:last-of-type { font-size: 0.6rem; letter-spacing: 0.02em; text-transform: none; padding: 0.1rem 0.4rem; }
   .icon-btn { left: auto; right: 0.5rem; top: 0.55rem; width: 30px; height: 30px; }
+
+  /* Leaflet zoom control: moved below the (collapsed) GRID PARAMETERS bar so it is never covered.
+     Collapsed bar spans top 12px to ~50px; Leaflet adds a 10px margin, so the buttons start at ~60px. */
+  .leaflet-top.leaflet-left { top: 50px; }
 
   /* Resolution notice sits above both bottom panels, full width, clear of the attribution */
   .notice { bottom: 192px; width: calc(100% - 24px); max-width: none; padding: 0.4rem 0.7rem; font-size: 0.68rem; }
