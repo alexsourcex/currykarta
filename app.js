@@ -128,6 +128,14 @@
     gctx.stroke();
   }
 
+  /** Visual only: at very high zoom (17-19) the grid is densest against rich map detail, so its intensity eases down.
+   *  Factor is 1.0 up to zoom 16 and falls linearly to HIGH_ZOOM_MIN at zoom 19. Geometry and spacing are never touched. */
+  const HIGH_ZOOM_FROM = 16, HIGH_ZOOM_TO = 19, HIGH_ZOOM_MIN = 0.65;
+  function zoomIntensity(zoom) {
+    const t = Math.min(1, Math.max(0, (zoom - HIGH_ZOOM_FROM) / (HIGH_ZOOM_TO - HIGH_ZOOM_FROM)));
+    return 1 - (1 - HIGH_ZOOM_MIN) * t;
+  }
+
   function render() {
     rafId = 0;
     const w = gridCanvas.clientWidth, h = gridCanvas.clientHeight;
@@ -146,7 +154,7 @@
     const f = gridFrame(visibleBbox(), params);
     const segs = f.R < 20000 ? 6 : 24; // more subdivision for large extents (curvature)
     if ((f.A.n1 - f.A.n0 > MAX_LINES) || (f.B.n1 - f.B.n0 > MAX_LINES)) { showNotice('Too many lines for this view. Zoom in.'); return; }
-    gctx.globalAlpha = params.opacity; gctx.lineWidth = params.lineWidth; gctx.lineCap = 'butt';
+    gctx.globalAlpha = params.opacity * zoomIntensity(map.getZoom()); gctx.lineWidth = params.lineWidth; gctx.lineCap = 'butt';
     gctx.shadowBlur = 0;
     if (params.gridA) drawFamily(f, 'A', '#22d3ee', [], segs);           // solid cyan
     if (params.gridB) drawFamily(f, 'B', '#a78bfa', [6, 4], segs);       // dashed violet (not color-only)
@@ -206,7 +214,7 @@
     function frame(t) {
       const w = cv.clientWidth, h = cv.clientHeight, d = Math.hypot(w, h), off = ((t || 0) * 0.004) % GAP;
       ctx.clearRect(0, 0, w, h); ctx.save(); ctx.translate(w / 2, h / 2); ctx.rotate(Math.PI / 4);
-      ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(34,211,238,0.24)'; ctx.shadowColor = 'rgba(34,211,238,0.45)'; ctx.shadowBlur = 4;
+      ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(111,214,200,0.2)'; ctx.shadowColor = 'rgba(111,214,200,0.4)'; ctx.shadowBlur = 4;
       ctx.beginPath();
       for (let x = -d + off; x < d; x += GAP) { ctx.moveTo(x, -d); ctx.lineTo(x, d); }  // family 1
       for (let y = -d + off; y < d; y += GAP) { ctx.moveTo(-d, y); ctx.lineTo(d, y); }  // family 2
