@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#040b12">
-  <title>Currykartan — Visualizing a theoretical earth grid</title>
-  <meta name="description" content="Interactive visualization of the theoretical Curry grid on SWEREF 99 TM. Not a scientifically validated phenomenon.">
+  <title>Currykartan — Visualisering av ett teoretiskt jordnät</title>
+  <meta name="description" content="Interaktiv visualisering av det teoretiska currynätet i SWEREF 99 TM. Inte ett vetenskapligt validerat fenomen.">
   <link rel="icon" href="data:,"> <!-- no favicon file: avoids a root-relative /favicon.ico 404 on GitHub Pages -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <link rel="stylesheet" href="style.css">
@@ -15,24 +15,24 @@
     <canvas id="hero-canvas" aria-hidden="true"></canvas>
     <div class="hero-inner">
       <h1>CURRY GRID</h1>
-      <p class="tagline">Visualizing a theoretical earth grid</p>
-      <p class="status mono">3.50 m · NORTHERN SWEDEN · THEORETICAL MODEL</p>
-      <button class="btn" id="explore-btn" type="button">EXPLORE THE GRID</button>
+      <p class="tagline">Visualisering av ett teoretiskt jordnät</p>
+      <p class="status mono">4,00 m · NORRA SVERIGE · TEORETISK MODELL</p>
+      <button class="btn" id="explore-btn" type="button">UTFORSKA NÄTET</button>
     </div>
   </header>
 
   <main>
-    <section class="map-section" id="map-section" aria-label="Interactive map">
-      <div id="map" role="application" aria-label="Map of Sweden with theoretical curry grid overlay"></div>
+    <section class="map-section" id="map-section" aria-label="Interaktiv karta">
+      <div id="map" role="application" aria-label="Karta över Sverige med teoretiskt currynät som överlägg"></div>
       <canvas id="grid-canvas" aria-hidden="true"></canvas>
       <div id="map-notice" class="notice mono" role="status" hidden></div>
 
       <details class="panel controls" id="controls" open>
-        <summary>GRID PARAMETERS</summary>
+        <summary>RUTNÄTSPARAMETRAR</summary>
         <div class="fields">
-          <label for="spacing">Spacing <span class="mono unit">m</span></label>
-          <input id="spacing" autocomplete="off" class="mono" type="number" step="0.5" min="0.1" max="10000" value="3.50" inputmode="decimal">
-          <label for="angle">Angle <span class="mono unit">°</span></label>
+          <label for="spacing">Avstånd <span class="mono unit">m</span></label>
+          <input id="spacing" autocomplete="off" class="mono" type="number" step="0.5" min="0.1" max="10000" value="4.00" inputmode="decimal">
+          <label for="angle">Vinkel <span class="mono unit">°</span></label>
           <input id="angle" autocomplete="off" class="mono" type="number" step="1" min="-360" max="360" value="45.00" inputmode="decimal">
           <label for="offsetX">Offset X <span class="mono unit">m</span></label>
           <input id="offsetX" autocomplete="off" class="mono" type="number" step="0.5" min="-100000" max="100000" value="0.00" inputmode="decimal">
@@ -40,55 +40,55 @@
           <input id="offsetY" autocomplete="off" class="mono" type="number" step="0.5" min="-100000" max="100000" value="0.00" inputmode="decimal">
         </div>
         <div class="checks">
-          <label><input type="checkbox" id="gridA" autocomplete="off" checked> Grid A <span class="swatch a" aria-hidden="true"></span><span class="sr-only">(solid line)</span></label>
-          <label><input type="checkbox" id="gridB" autocomplete="off" checked> Grid B <span class="swatch b" aria-hidden="true"></span><span class="sr-only">(dashed line)</span></label>
+          <label><input type="checkbox" id="gridA" autocomplete="off" checked> Grid A <span class="swatch a" aria-hidden="true"></span><span class="sr-only">(heldragen linje)</span></label>
+          <label><input type="checkbox" id="gridB" autocomplete="off" checked> Grid B <span class="swatch b" aria-hidden="true"></span><span class="sr-only">(streckad linje)</span></label>
         </div>
         <div class="sliders">
-          <label for="opacity">Opacity</label>
+          <label for="opacity">Opacitet</label>
           <input id="opacity" autocomplete="off" type="range" min="0.1" max="1" step="0.05" value="0.55">
-          <label for="lineWidth">Line width</label>
+          <label for="lineWidth">Linjebredd</label>
           <input id="lineWidth" autocomplete="off" type="range" min="0.5" max="4" step="0.25" value="0.75">
         </div>
       </details>
 
-      <aside class="panel info" aria-label="Model information">
-        <button class="icon-btn" id="info-btn" type="button" aria-label="About this model" aria-haspopup="dialog">i</button>
+      <aside class="panel info" aria-label="Modellinformation">
+        <button class="icon-btn" id="info-btn" type="button" aria-label="Om den här modellen" aria-haspopup="dialog">i</button>
         <dl class="mono">
-          <dt>MODEL</dt><dd>Theoretical Curry Grid</dd>
-          <dt>SPACING</dt><dd id="info-spacing">3.50 m</dd>
-          <dt>PROJECTION</dt><dd>SWEREF 99 TM</dd>
-          <dt>STATUS</dt><dd>Visualization only</dd>
+          <dt>MODELL</dt><dd>Teoretiskt currynät</dd>
+          <dt>AVSTÅND</dt><dd id="info-spacing">4,00 m</dd>
+          <dt>PROJEKTION</dt><dd>SWEREF 99 TM</dd>
+          <dt>STATUS</dt><dd>Endast visualisering</dd>
         </dl>
       </aside>
 
       <div class="panel readout mono" aria-live="off">
         <div>LAT <span id="r-lat">–</span></div>
         <div>LON <span id="r-lon">–</span></div>
-        <div>EASTING <span id="r-e">–</span></div>
-        <div>NORTHING <span id="r-n">–</span></div>
+        <div>ÖSTVÄRDE <span id="r-e">–</span></div>
+        <div>NORDVÄRDE <span id="r-n">–</span></div>
         <div class="zoom">ZOOM <span id="r-zoom">–</span></div>
       </div>
     </section>
 
-    <section class="cards" aria-label="About the visualization">
-      <article class="card"><h2>THE GRID</h2><p>3.5 metre theoretical spacing</p></article>
-      <article class="card"><h2>PROJECTION</h2><p>Calculated using SWEREF 99 TM</p></article>
-      <article class="card"><h2>VISUALIZATION</h2><p>An interactive mathematical representation</p></article>
+    <section class="cards" aria-label="Om visualiseringen">
+      <article class="card"><h2>RUTNÄTET</h2><p>4 meter teoretiskt avstånd</p></article>
+      <article class="card"><h2>PROJEKTION</h2><p>Beräknad med SWEREF 99 TM</p></article>
+      <article class="card"><h2>VISUALISERING</h2><p>En interaktiv matematisk representation</p></article>
     </section>
   </main>
 
   <footer>
     <strong>CURRY GRID</strong>
-    <p>Theoretical geospatial visualization</p>
-    <p>Not a scientifically validated phenomenon.</p>
+    <p>Teoretisk geospatial visualisering</p>
+    <p>Inte ett vetenskapligt validerat fenomen.</p>
   </footer>
 
   <dialog id="about-modal" aria-labelledby="about-title">
-    <h2 id="about-title">About this model</h2>
-    <p>Curry lines are <strong>not scientifically established</strong>. There is no scientifically verified evidence that they represent real energy lines on Earth.</p>
-    <p>Currykartan visualizes a theoretical, esoteric model. Mathematics, coordinates and map projection are used to <em>draw</em> the model, not to prove it.</p>
-    <p>The map geometry itself is computed in SWEREF 99 TM (EPSG:3006) and is technically accurate; the existence of the lines is not claimed.</p>
-    <button class="btn" id="modal-close" type="button">CLOSE</button>
+    <h2 id="about-title">Om den här modellen</h2>
+    <p>Currylinjer är <strong>inte vetenskapligt etablerade</strong>. Det finns inga vetenskapligt verifierade belägg för att de motsvarar verkliga energilinjer på jorden.</p>
+    <p>Currykartan visualiserar en teoretisk, esoterisk modell. Matematik, koordinater och kartprojektion används för att <em>rita</em> modellen, inte för att bevisa den.</p>
+    <p>Själva kartgeometrin beräknas i SWEREF 99 TM (EPSG:3006) och är tekniskt korrekt; linjernas existens påstås inte.</p>
+    <button class="btn" id="modal-close" type="button">STÄNG</button>
   </dialog>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>

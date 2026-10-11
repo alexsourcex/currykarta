@@ -4,9 +4,10 @@
   'use strict';
 
   const $ = (id) => document.getElementById(id);
+  const sv = (n, decimals) => n.toFixed(decimals).replace('.', ','); // Swedish decimal comma for displayed text only
 
   /* ===== Constants ===== */
-  const DEFAULTS = { spacing: 3.5, angle: 45, offsetX: 0, offsetY: 0, gridA: true, gridB: true, opacity: 0.55, lineWidth: 0.75 };
+  const DEFAULTS = { spacing: 4, angle: 45, offsetX: 0, offsetY: 0, gridA: true, gridB: true, opacity: 0.55, lineWidth: 0.75 };
   const LIMITS = { spacing: [0.1, 10000], angle: [-360, 360], offsetX: [-1e5, 1e5], offsetY: [-1e5, 1e5] };
   const MIN_PX_SPACING = 6;   // below this the grid is a solid wash; don't draw
   const MAX_LINES = 1500;     // hard safety cap per line family
@@ -77,12 +78,16 @@
   /* ===== 1. Map initialization ===== */
   let map = null, gridCanvas = null, gctx = null;
   function initMap() {
+    L.Control.Zoom.prototype.options.zoomInTitle = 'Zooma in';   // Leaflet's default tooltips/aria-labels are English
+    L.Control.Zoom.prototype.options.zoomOutTitle = 'Zooma ut';
     map = L.map('map', { center: [65.0, 18.0], zoom: 5, minZoom: 3, maxZoom: 19,
       zoomAnimation: false, fadeAnimation: false }); // no zoom animation => overlay never drifts from tiles
     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }).addTo(map);
+    const leafletLink = document.querySelector('.leaflet-control-attribution a[href="https://leafletjs.com"]');
+    if (leafletLink) leafletLink.title = 'Ett JavaScript-bibliotek för interaktiva kartor';
     let failed = 0;
-    tiles.on('tileerror', () => { if (++failed === 3) showNotice('Some map tiles failed to load. Check your connection.'); });
+    tiles.on('tileerror', () => { if (++failed === 3) showNotice('Vissa kartrutor kunde inte laddas. Kontrollera anslutningen.'); });
     tiles.on('tileload', () => { failed = 0; });
   }
 
@@ -147,13 +152,13 @@
     if (pxSpacing < MIN_PX_SPACING) {
       // zoom at which the real spacing reaches MIN_PX_SPACING (spacing itself is never altered)
       const needZoom = Math.ceil(Math.log2((40075016.686 * Math.cos((lat * Math.PI) / 180) * MIN_PX_SPACING) / (256 * params.spacing)));
-      showNotice(`GRID RESOLUTION ${params.spacing.toFixed(2)} m · Zoom in to visualize (zoom ${needZoom}+)`);
+      showNotice(`NÄTUPPLÖSNING ${sv(params.spacing, 2)} m · Zooma in för att visualisera (zoom ${needZoom}+)`);
       return;
     }
     showNotice('');
     const f = gridFrame(visibleBbox(), params);
     const segs = f.R < 20000 ? 6 : 24; // more subdivision for large extents (curvature)
-    if ((f.A.n1 - f.A.n0 > MAX_LINES) || (f.B.n1 - f.B.n0 > MAX_LINES)) { showNotice('Too many lines for this view. Zoom in.'); return; }
+    if ((f.A.n1 - f.A.n0 > MAX_LINES) || (f.B.n1 - f.B.n0 > MAX_LINES)) { showNotice('För många linjer för den här vyn. Zooma in.'); return; }
     gctx.globalAlpha = params.opacity * zoomIntensity(map.getZoom()); gctx.lineWidth = params.lineWidth; gctx.lineCap = 'butt';
     gctx.shadowBlur = 0;
     if (params.gridA) drawFamily(f, 'A', '#FFD166', [], segs);           // solid clear gold
@@ -177,7 +182,7 @@
   function bindRange(key) { const el = $(key); if (el) el.addEventListener('input', () => { params[key] = parseFloat(el.value); scheduleRender(); }); }
 
   function onParamsChanged() {
-    const s = $('info-spacing'); if (s) s.textContent = params.spacing.toFixed(2) + ' m';
+    const s = $('info-spacing'); if (s) s.textContent = sv(params.spacing, 2) + ' m';
     scheduleRender();
   }
 
@@ -199,7 +204,7 @@
   /* ===== 7. Mouse coordinate display ===== */
   function updateReadout(latlng) {
     const [e, n] = wgs84ToSweref(latlng.lat, latlng.lng);
-    $('r-lat').textContent = latlng.lat.toFixed(4); $('r-lon').textContent = latlng.lng.toFixed(4);
+    $('r-lat').textContent = sv(latlng.lat, 4); $('r-lon').textContent = sv(latlng.lng, 4);
     $('r-e').textContent = Math.round(e); $('r-n').textContent = Math.round(n);
   }
   const updateZoom = () => { $('r-zoom').textContent = map.getZoom(); };
@@ -235,7 +240,7 @@
     initUI();
     notice = $('map-notice');
     if (!hasLibs || !$('map')) { // external CDN failed
-      const el = $('map'); if (el) el.textContent = 'Map libraries failed to load. Check your connection and reload.';
+      const el = $('map'); if (el) el.textContent = 'Kartbiblioteken kunde inte laddas. Kontrollera anslutningen och ladda om sidan.';
       return;
     }
     verifyTransforms();
