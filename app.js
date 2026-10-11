@@ -156,8 +156,8 @@
     if ((f.A.n1 - f.A.n0 > MAX_LINES) || (f.B.n1 - f.B.n0 > MAX_LINES)) { showNotice('Too many lines for this view. Zoom in.'); return; }
     gctx.globalAlpha = params.opacity * zoomIntensity(map.getZoom()); gctx.lineWidth = params.lineWidth; gctx.lineCap = 'butt';
     gctx.shadowBlur = 0;
-    if (params.gridA) drawFamily(f, 'A', '#22d3ee', [], segs);           // solid cyan
-    if (params.gridB) drawFamily(f, 'B', '#a78bfa', [6, 4], segs);       // dashed violet (not color-only)
+    if (params.gridA) drawFamily(f, 'A', '#FFD166', [], segs);           // solid clear gold
+    if (params.gridB) drawFamily(f, 'B', '#69D8C8', [6, 4], segs);       // dashed aurora turquoise (not color-only)
     gctx.globalAlpha = 1;
   }
   const scheduleRender = () => { if (!rafId) rafId = requestAnimationFrame(render); };

@@ -2,7 +2,7 @@
   --bg: #040b12; --bg2: #0a1a24; --text: #e6eeea; --muted: #93a8a6;
   --cyan: #6fd6c8; --accent-rgb: 111, 214, 200; --violet: #a78bfa;
   --gold: #d9b76e; --gold-rgb: 217, 183, 110; --aurora-rgb: 127, 224, 168;
-  --grid-a: #22d3ee; /* legend swatches must match the canvas grid colours (A cyan, B violet) */
+  --grid-a: #FFD166; --grid-b: #69D8C8; /* legend swatches must match the canvas grid colours (A clear gold, B aurora turquoise) */
   --glass: rgba(8, 22, 30, 0.72); --border: rgba(var(--accent-rgb), 0.22);
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --sans: "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
@@ -48,7 +48,7 @@ input[type="number"] { width: 100%; background: rgba(0, 0, 0, 0.35); color: var(
 .checks { display: flex; gap: 1.2rem; margin: 0.9rem 0 0.5rem; font-size: 0.85rem; }
 .checks label { display: flex; align-items: center; gap: 0.4rem; }
 .swatch { display: inline-block; width: 22px; height: 0; border-top: 2px solid var(--cyan); }
-.swatch.b { border-top: 2px dashed var(--violet); }
+.swatch.b { border-top: 2px dashed var(--grid-b); }
 .sliders { display: grid; grid-template-columns: 80px 1fr; gap: 0.4rem 0.6rem; align-items: center; font-size: 0.85rem; }
 input[type="range"] { width: 100%; accent-color: var(--cyan); }
 .info { top: 12px; right: 12px; padding: 0.75rem 1rem 0.75rem 3rem; font-size: 0.7rem; }
@@ -118,8 +118,8 @@ input[type="number"]:focus-visible { outline: 1px solid var(--cyan); outline-off
 .checks label:has(input:checked) { background: rgba(var(--accent-rgb), 0.06); border-color: rgba(var(--accent-rgb), 0.32); }
 .checks input { accent-color: var(--cyan); margin: 0; }
 #gridB { accent-color: var(--violet); }
-.swatch { width: 28px; height: 2px; margin-left: auto; border: 0; background: var(--grid-a); box-shadow: 0 0 6px rgba(34, 211, 238, 0.6); }
-.swatch.b { background: repeating-linear-gradient(90deg, var(--violet) 0 6px, transparent 6px 10px); box-shadow: none; }
+.swatch { width: 28px; height: 2px; margin-left: auto; border: 0; background: var(--grid-a); box-shadow: 0 0 6px rgba(255, 209, 102, 0.6); }
+.swatch.b { background: repeating-linear-gradient(90deg, var(--grid-b) 0 6px, transparent 6px 10px); box-shadow: none; }
 
 /* Sliders: thin track, ring thumb, ring grows on hover/focus */
 .sliders { grid-template-columns: 76px 1fr; gap: 0.55rem 0.6rem; }
